@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-protocol SwipeControllerDelegate: class {
+public protocol SwipeControllerDelegate: class {
     
     func swipeController(_ controller: SwipeController, canBeginEditingSwipeableFor orientation: SwipeActionsOrientation) -> Bool
     
@@ -26,13 +26,13 @@ protocol SwipeControllerDelegate: class {
     
 }
 
-class SwipeController: NSObject {
+open class SwipeController: NSObject {
     
-    weak var swipeable: (UIView & Swipeable)?
-    weak var actionsContainerView: UIView?
+    public weak var swipeable: (UIView & Swipeable)?
+    public weak var actionsContainerView: UIView?
     
-    weak var delegate: SwipeControllerDelegate?
-    weak var scrollView: UIScrollView?
+    public weak var delegate: SwipeControllerDelegate?
+    public weak var scrollView: UIScrollView?
     
     var animator: SwipeAnimator?
     
@@ -40,7 +40,7 @@ class SwipeController: NSObject {
     
     var originalCenter: CGFloat = 0
     var scrollRatio: CGFloat = 1.0
-    var originalLayoutMargins: UIEdgeInsets = .zero
+    public var originalLayoutMargins: UIEdgeInsets = .zero
     
     lazy var panGestureRecognizer: UIPanGestureRecognizer = {
         let gesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(gesture:)))
@@ -54,7 +54,7 @@ class SwipeController: NSObject {
         return gesture
     }()
     
-    init(swipeable: UIView & Swipeable, actionsContainerView: UIView) {
+    public init(swipeable: UIView & Swipeable, actionsContainerView: UIView) {
         self.swipeable = swipeable
         self.actionsContainerView = actionsContainerView
         
@@ -188,7 +188,7 @@ class SwipeController: NSObject {
         return true
     }
     
-    func configureActionsView(with actions: [SwipeAction], for orientation: SwipeActionsOrientation) {
+    open func configureActionsView(with actions: [SwipeAction], for orientation: SwipeActionsOrientation) {
         guard var swipeable = self.swipeable,
             let actionsContainerView = self.actionsContainerView,
             let scrollView = self.scrollView else {
@@ -343,7 +343,7 @@ class SwipeController: NSObject {
 }
 
 extension SwipeController: UIGestureRecognizerDelegate {
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if gestureRecognizer == tapGestureRecognizer {
             if UIAccessibility.isVoiceOverRunning {
                 scrollView?.hideSwipeables()
@@ -370,7 +370,7 @@ extension SwipeController: UIGestureRecognizerDelegate {
 }
 
 extension SwipeController: SwipeActionsViewDelegate {
-    func swipeActionsView(_ swipeActionsView: SwipeActionsView, didSelect action: SwipeAction) {
+    public func swipeActionsView(_ swipeActionsView: SwipeActionsView, didSelect action: SwipeAction) {
         perform(action: action)
     }
     

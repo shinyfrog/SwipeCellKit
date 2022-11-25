@@ -7,12 +7,12 @@
 
 import UIKit
 
-protocol SwipeActionsViewDelegate: class {
+public protocol SwipeActionsViewDelegate: class {
     func swipeActionsView(_ swipeActionsView: SwipeActionsView, didSelect action: SwipeAction)
 }
 
-class SwipeActionsView: UIView {
-    weak var delegate: SwipeActionsViewDelegate?
+open class SwipeActionsView: UIView {
+    public weak var delegate: SwipeActionsViewDelegate?
     
     let transitionLayout: SwipeTransitionLayout
     var layoutContext: ActionsViewLayoutContext
@@ -26,14 +26,14 @@ class SwipeActionsView: UIView {
     }
 
     weak var safeAreaInsetView: UIView?
-    let orientation: SwipeActionsOrientation
-    let actions: [SwipeAction]
-    let options: SwipeOptions
+    public let orientation: SwipeActionsOrientation
+    public let actions: [SwipeAction]
+    public let options: SwipeOptions
     
-    var buttons: [SwipeActionButton] = []
+    public var buttons: [SwipeActionButton] = []
     
-    var minimumButtonWidth: CGFloat = 0
-    var maximumImageHeight: CGFloat {
+    public var minimumButtonWidth: CGFloat = 0
+    public var maximumImageHeight: CGFloat {
         return actions.reduce(0, { initial, next in max(initial, next.image?.size.height ?? 0) })
     }
     
@@ -81,7 +81,7 @@ class SwipeActionsView: UIView {
         return options.expansionStyle != nil ? actions.last : nil
     }
     
-    init(contentEdgeInsets: UIEdgeInsets,
+    public init(contentEdgeInsets: UIEdgeInsets,
          maxSize: CGSize,
          safeAreaInsetView: UIView,
          options: SwipeOptions,
@@ -134,11 +134,11 @@ class SwipeActionsView: UIView {
         buttons = addButtons(for: self.actions, withMaximum: maxSize, contentEdgeInsets: contentEdgeInsets)
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func addButtons(for actions: [SwipeAction], withMaximum size: CGSize, contentEdgeInsets: UIEdgeInsets) -> [SwipeActionButton] {
+    open func addButtons(for actions: [SwipeAction], withMaximum size: CGSize, contentEdgeInsets: UIEdgeInsets) -> [SwipeActionButton] {
         let buttons: [SwipeActionButton] = actions.map({ action in
             let actionButton = SwipeActionButton(action: action)
             actionButton.addTarget(self, action: #selector(actionTapped(button:)), for: .touchUpInside)
@@ -195,13 +195,13 @@ class SwipeActionsView: UIView {
         return buttons
     }
     
-    @objc func actionTapped(button: SwipeActionButton) {
+    @objc public func actionTapped(button: SwipeActionButton) {
         guard let index = buttons.firstIndex(of: button) else { return }
 
         delegate?.swipeActionsView(self, didSelect: actions[index])
     }
     
-    func buttonEdgeInsets(fromOptions options: SwipeOptions) -> UIEdgeInsets {
+    public func buttonEdgeInsets(fromOptions options: SwipeOptions) -> UIEdgeInsets {
         let padding = options.buttonPadding ?? 8
         return UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding)
     }
@@ -269,7 +269,7 @@ class SwipeActionsView: UIView {
         return mask
     }
     
-    override func layoutSubviews() {
+    open override func layoutSubviews() {
         super.layoutSubviews()
         
         for subview in subviews.enumerated() {
@@ -282,11 +282,11 @@ class SwipeActionsView: UIView {
     }
 }
 
-class SwipeActionButtonWrapperView: UIView {
-    let contentRect: CGRect
+open class SwipeActionButtonWrapperView: UIView {
+    public let contentRect: CGRect
     var actionBackgroundColor: UIColor?
     
-    init(frame: CGRect, action: SwipeAction, orientation: SwipeActionsOrientation, contentWidth: CGFloat) {
+    public init(frame: CGRect, action: SwipeAction, orientation: SwipeActionsOrientation, contentWidth: CGFloat) {
         switch orientation {
         case .left:
             contentRect = CGRect(x: frame.width - contentWidth, y: 0, width: contentWidth, height: frame.height)
@@ -299,7 +299,7 @@ class SwipeActionButtonWrapperView: UIView {
         configureBackgroundColor(with: action)
     }
     
-    override func draw(_ rect: CGRect) {
+    open override func draw(_ rect: CGRect) {
         super.draw(rect)
         
         if let actionBackgroundColor = self.actionBackgroundColor, let context = UIGraphicsGetCurrentContext() {
@@ -342,7 +342,7 @@ class SwipeActionButtonWrapperView: UIView {
         }
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }

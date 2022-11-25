@@ -124,7 +124,7 @@ public enum ExpansionFulfillmentStyle {
 
 // MARK: - Internal
 
-internal extension SwipeAction {
+public  extension SwipeAction {
     var hasBackgroundColor: Bool {
         return backgroundColor != .clear && backgroundEffect == nil
     }

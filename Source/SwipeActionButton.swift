@@ -7,13 +7,13 @@
 
 import UIKit
 
-class SwipeActionButton: UIButton {
-    var spacing: CGFloat = 8
-    var shouldHighlight = true
-    var highlightedBackgroundColor: UIColor?
+open class SwipeActionButton: UIButton {
+    public var spacing: CGFloat = 8
+    public var shouldHighlight = true
+    public var highlightedBackgroundColor: UIColor?
 
-    var maximumImageHeight: CGFloat = 0
-    var verticalAlignment: SwipeVerticalAlignment = .centerFirstBaseline
+    public var maximumImageHeight: CGFloat = 0
+    public var verticalAlignment: SwipeVerticalAlignment = .centerFirstBaseline
     
     
     var currentSpacing: CGFloat {
@@ -34,11 +34,11 @@ class SwipeActionButton: UIButton {
         }
     }
     
-    override var intrinsicContentSize: CGSize {
+    open override var intrinsicContentSize: CGSize {
         return CGSize(width: UIView.noIntrinsicMetric, height: contentEdgeInsets.top + alignmentRect.height + contentEdgeInsets.bottom)
     }
     
-    convenience init(action: SwipeAction) {
+    public convenience init(action: SwipeAction) {
         self.init(frame: .zero)
 
         contentHorizontalAlignment = .center
@@ -61,7 +61,7 @@ class SwipeActionButton: UIButton {
         setImage(action.highlightedImage ?? action.image, for: .highlighted)
     }
     
-    override var isHighlighted: Bool {
+    open override var isHighlighted: Bool {
         didSet {
             guard shouldHighlight else { return }
             
@@ -69,7 +69,7 @@ class SwipeActionButton: UIButton {
         }
     }
     
-    func preferredWidth(maximum: CGFloat) -> CGFloat {
+    public func preferredWidth(maximum: CGFloat) -> CGFloat {
         let width = maximum > 0 ? maximum : CGFloat.greatestFiniteMagnitude
         let textWidth = titleBoundingRect(with: CGSize(width: width, height: CGFloat.greatestFiniteMagnitude)).width
         let imageWidth = currentImage?.size.width ?? 0
@@ -86,13 +86,13 @@ class SwipeActionButton: UIButton {
                                   context: nil).integral
     }
     
-    override func titleRect(forContentRect contentRect: CGRect) -> CGRect {
+    open override func titleRect(forContentRect contentRect: CGRect) -> CGRect {
         var rect = contentRect.center(size: titleBoundingRect(with: contentRect.size).size)
         rect.origin.y = alignmentRect.minY + imageHeight + currentSpacing
         return rect.integral
     }
     
-    override func imageRect(forContentRect contentRect: CGRect) -> CGRect {
+    open override func imageRect(forContentRect contentRect: CGRect) -> CGRect {
         var rect = contentRect.center(size: currentImage?.size ?? .zero)
         rect.origin.y = alignmentRect.minY + (imageHeight - rect.height) / 2
         return rect
