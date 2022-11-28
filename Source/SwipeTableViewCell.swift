@@ -13,7 +13,7 @@ import UIKit
  
  The default behavior closely matches the stock Mail.app. If you want to customize the transition style (ie. how the action buttons are exposed), or the expansion style (the behavior when the row is swiped passes a defined threshold), you can return the appropriately configured `SwipeOptions` via the `SwipeTableViewCellDelegate` delegate.
  */
-open class SwipeTableViewCell: UITableViewCell {
+open class SwipeTableViewCell: UITableViewCell, SwipeControllerDelegate {
     
     /// The object that acts as the delegate of the `SwipeTableViewCell`.
     public weak var delegate: SwipeTableViewCellDelegate?
@@ -178,32 +178,32 @@ open class SwipeTableViewCell: UITableViewCell {
         }
         isPreviouslySelected = false
     }
-}
-
-extension SwipeTableViewCell: SwipeControllerDelegate {
-    public func swipeController(_ controller: SwipeController, canBeginEditingSwipeableFor orientation: SwipeActionsOrientation) -> Bool {
+    
+    // MARK: - SwipeControllerDelegate
+    
+    open func swipeController(_ controller: SwipeController, canBeginEditingSwipeableFor orientation: SwipeActionsOrientation) -> Bool {
         return self.isEditing == false
     }
     
-    public func swipeController(_ controller: SwipeController, editActionsForSwipeableFor orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+    open func swipeController(_ controller: SwipeController, editActionsForSwipeableFor orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         guard let tableView = tableView, let indexPath = tableView.indexPath(for: self) else { return nil }
         
         return delegate?.tableView(tableView, editActionsForRowAt: indexPath, for: orientation)
     }
     
-    public func swipeController(_ controller: SwipeController, editActionsOptionsForSwipeableFor orientation: SwipeActionsOrientation) -> SwipeOptions {
+    open func swipeController(_ controller: SwipeController, editActionsOptionsForSwipeableFor orientation: SwipeActionsOrientation) -> SwipeOptions {
         guard let tableView = tableView, let indexPath = tableView.indexPath(for: self) else { return SwipeOptions() }
         
         return delegate?.tableView(tableView, editActionsOptionsForRowAt: indexPath, for: orientation) ?? SwipeOptions()
     }
     
-    public func swipeController(_ controller: SwipeController, visibleRectFor scrollView: UIScrollView) -> CGRect? {
+    open func swipeController(_ controller: SwipeController, visibleRectFor scrollView: UIScrollView) -> CGRect? {
         guard let tableView = tableView else { return nil }
         
         return delegate?.visibleRect(for: tableView)
     }
     
-    public func swipeController(_ controller: SwipeController, willBeginEditingSwipeableFor orientation: SwipeActionsOrientation) {
+    open func swipeController(_ controller: SwipeController, willBeginEditingSwipeableFor orientation: SwipeActionsOrientation) {
         guard let tableView = tableView, let indexPath = tableView.indexPath(for: self) else { return }
         
         // Remove highlight and deselect any selected cells
@@ -214,7 +214,7 @@ extension SwipeTableViewCell: SwipeControllerDelegate {
         delegate?.tableView(tableView, willBeginEditingRowAt: indexPath, for: orientation)
     }
     
-    public func swipeController(_ controller: SwipeController, didEndEditingSwipeableFor orientation: SwipeActionsOrientation) {
+    open func swipeController(_ controller: SwipeController, didEndEditingSwipeableFor orientation: SwipeActionsOrientation) {
         guard let tableView = tableView, let indexPath = tableView.indexPath(for: self), let actionsView = self.actionsView else { return }
         
         resetSelectedState()
@@ -222,7 +222,7 @@ extension SwipeTableViewCell: SwipeControllerDelegate {
         delegate?.tableView(tableView, didEndEditingRowAt: indexPath, for: actionsView.orientation)
     }
     
-    public func swipeController(_ controller: SwipeController, didDeleteSwipeableAt indexPath: IndexPath) {
+    open func swipeController(_ controller: SwipeController, didDeleteSwipeableAt indexPath: IndexPath) {
         tableView?.deleteRows(at: [indexPath], with: .none)
     }
 }

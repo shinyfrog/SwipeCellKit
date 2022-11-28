@@ -69,7 +69,7 @@ public enum SwipeActionsOrientation: CGFloat {
     /// The right side of the cell.
     case right = 1
     
-    var scale: CGFloat {
+    public var scale: CGFloat {
         return rawValue
     }
 }

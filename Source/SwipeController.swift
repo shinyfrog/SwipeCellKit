@@ -239,7 +239,7 @@ open class SwipeController: NSObject {
         swipeable.state = .dragging
     }
     
-    func animate(duration: Double = 0.7, toOffset offset: CGFloat, withInitialVelocity velocity: CGFloat = 0, completion: ((Bool) -> Void)? = nil) {
+    public func animate(duration: Double = 0.7, toOffset offset: CGFloat, withInitialVelocity velocity: CGFloat = 0, completion: ((Bool) -> Void)? = nil) {
         stopAnimatorIfNeeded()
         
         swipeable?.layoutIfNeeded()
@@ -340,6 +340,62 @@ open class SwipeController: NSObject {
         swipeable?.actionsView = nil
     }
     
+    open func performFillAction(action: SwipeAction, fillOption: SwipeExpansionStyle.FillOptions) {
+        guard let swipeable = self.swipeable, let actionsContainerView = self.actionsContainerView else { return }
+        guard let actionsView = swipeable.actionsView, let indexPath = swipeable.indexPath else { return }
+
+        let newCenter = swipeable.bounds.midX - (swipeable.bounds.width + actionsView.minimumButtonWidth) * actionsView.orientation.scale
+        
+        action.completionHandler = { [weak self] style in
+            guard let `self` = self else { return }
+            action.completionHandler = nil
+            
+            self.delegate?.swipeController(self, didEndEditingSwipeableFor: actionsView.orientation)
+            
+            switch style {
+            case .delete:
+                actionsContainerView.mask = actionsView.createDeletionMask()
+                
+                self.delegate?.swipeController(self, didDeleteSwipeableAt: indexPath)
+                
+                UIView.animate(withDuration: 0.3, animations: {
+                    guard let actionsContainerView = self.actionsContainerView else { return }
+                    
+                    actionsContainerView.center.x = newCenter
+                    actionsContainerView.mask?.frame.size.height = 0
+                    swipeable.actionsView?.visibleWidth = abs(actionsContainerView.frame.minX)
+                    
+                    if fillOption.timing == .after {
+                        actionsView.alpha = 0
+                    }
+                }) { [weak self] _ in
+                    self?.actionsContainerView?.mask = nil
+                    self?.resetSwipe()
+                    self?.reset()
+                }
+            case .reset:
+                self.hideSwipe(animated: true)
+            }
+        }
+        
+        let invokeAction = {
+            action.handler?(action, indexPath)
+            
+            if let style = fillOption.autoFulFillmentStyle {
+                action.fulfill(with: style)
+            }
+        }
+        
+        animate(duration: 0.3, toOffset: newCenter) { _ in
+            if fillOption.timing == .after {
+                invokeAction()
+            }
+        }
+        
+        if fillOption.timing == .with {
+            invokeAction()
+        }
+    }
 }
 
 extension SwipeController: UIGestureRecognizerDelegate {
@@ -402,64 +458,7 @@ extension SwipeController: SwipeActionsViewDelegate {
         action.handler?(action, indexPath)
     }
     
-    func performFillAction(action: SwipeAction, fillOption: SwipeExpansionStyle.FillOptions) {
-        guard let swipeable = self.swipeable, let actionsContainerView = self.actionsContainerView else { return }
-        guard let actionsView = swipeable.actionsView, let indexPath = swipeable.indexPath else { return }
-
-        let newCenter = swipeable.bounds.midX - (swipeable.bounds.width + actionsView.minimumButtonWidth) * actionsView.orientation.scale
-        
-        action.completionHandler = { [weak self] style in
-            guard let `self` = self else { return }
-            action.completionHandler = nil
-            
-            self.delegate?.swipeController(self, didEndEditingSwipeableFor: actionsView.orientation)
-            
-            switch style {
-            case .delete:
-                actionsContainerView.mask = actionsView.createDeletionMask()
-                
-                self.delegate?.swipeController(self, didDeleteSwipeableAt: indexPath)
-                
-                UIView.animate(withDuration: 0.3, animations: {
-                    guard let actionsContainerView = self.actionsContainerView else { return }
-                    
-                    actionsContainerView.center.x = newCenter
-                    actionsContainerView.mask?.frame.size.height = 0
-                    swipeable.actionsView?.visibleWidth = abs(actionsContainerView.frame.minX)
-                    
-                    if fillOption.timing == .after {
-                        actionsView.alpha = 0
-                    }
-                }) { [weak self] _ in
-                    self?.actionsContainerView?.mask = nil
-                    self?.resetSwipe()
-                    self?.reset()
-                }
-            case .reset:
-                self.hideSwipe(animated: true)
-            }
-        }
-        
-        let invokeAction = {
-            action.handler?(action, indexPath)
-            
-            if let style = fillOption.autoFulFillmentStyle {
-                action.fulfill(with: style)
-            }
-        }
-        
-        animate(duration: 0.3, toOffset: newCenter) { _ in
-            if fillOption.timing == .after {
-                invokeAction()
-            }
-        }
-        
-        if fillOption.timing == .with {
-            invokeAction()
-        }
-    }
-    
-    func hideSwipe(animated: Bool, completion: ((Bool) -> Void)? = nil) {
+    public func hideSwipe(animated: Bool, completion: ((Bool) -> Void)? = nil) {
         guard var swipeable = self.swipeable, let actionsContainerView = self.actionsContainerView else { return }
         guard swipeable.state == .left || swipeable.state == .right else { return }
         guard let actionView = swipeable.actionsView else { return }
@@ -482,7 +481,7 @@ extension SwipeController: SwipeActionsViewDelegate {
         delegate?.swipeController(self, didEndEditingSwipeableFor: actionView.orientation)
     }
     
-    func resetSwipe() {
+    public func resetSwipe() {
         guard let swipeable = self.swipeable, let actionsContainerView = self.actionsContainerView else { return }
         
         let targetCenter = self.targetCenter(active: false)

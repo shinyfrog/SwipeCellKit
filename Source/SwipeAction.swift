@@ -108,9 +108,7 @@ public class SwipeAction: NSObject {
         completionHandler?(style)
     }
     
-    // MARK: - Internal
-    
-    internal var completionHandler: ((ExpansionFulfillmentStyle) -> Void)?
+    public var completionHandler: ((ExpansionFulfillmentStyle) -> Void)?
 }
 
 /// Describes how expansion should be resolved once the action has been fulfilled.
