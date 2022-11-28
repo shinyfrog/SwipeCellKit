@@ -160,7 +160,14 @@ public class BearSwipeController: SwipeController {
            let view = gestureRecognizer.view,
            let gestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
             let translation = gestureRecognizer.translation(in: view)
-            return abs(translation.y) <= abs(translation.x)
+            let hasLeftActions = self.delegate?.swipeController(self, editActionsForSwipeableFor: .left)?.count ?? 0 > 0
+            let hasRightActions = self.delegate?.swipeController(self, editActionsForSwipeableFor: .right)?.count ?? 0 > 0
+            var actionsViewVisible = false
+            if let preferredWidth = swipeable?.actionsView?.preferredWidth, let visibleWidth = swipeable?.actionsView?.visibleWidth {
+                actionsViewVisible = visibleWidth / preferredWidth > 0.5
+            }
+            // Starting the gestureRecognizer only if actions on the orientation are available or if the actionsView is already visible
+            result = result && ((translation.x < 0 && hasRightActions) || (translation.x > 0 && hasLeftActions) || (actionsViewVisible))
         }
         return result
     }
