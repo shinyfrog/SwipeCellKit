@@ -63,7 +63,6 @@
 			isa = PBXGroup;
 			children = (
 				9FDAC56529327A8300A002A9 /* BearExample */,
-				9FDAC56429327A8300A002A9 /* Products */,
 				9FDAC5822932837E00A002A9 /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -74,6 +73,7 @@
 				9FDAC56329327A8300A002A9 /* BearExample.app */,
 			);
 			name = Products;
+			path = ..;
 			sourceTree = "<group>";
 		};
 		9FDAC56529327A8300A002A9 /* BearExample */ = {
@@ -88,6 +88,7 @@
 				9FDAC56F29327A8400A002A9 /* Assets.xcassets */,
 				9FDAC57129327A8400A002A9 /* LaunchScreen.storyboard */,
 				9FDAC57429327A8400A002A9 /* Info.plist */,
+				9FDAC56429327A8300A002A9 /* Products */,
 			);
 			path = BearExample;
 			sourceTree = "<group>";

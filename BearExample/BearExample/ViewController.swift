@@ -11,6 +11,8 @@ import SwipeCellKit
 class ViewController: UIViewController {
 
     @IBOutlet var tableView: UITableView!
+    
+    var numberOfNotes: Int = 30
 
 }
 
@@ -21,7 +23,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
+        return self.numberOfNotes
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -33,7 +35,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return CGFloat(50) + CGFloat(indexPath.row * 20)
+        return CGFloat(50) + CGFloat(indexPath.row * 2)
     }
 }
 
@@ -55,6 +57,9 @@ extension ViewController: SwipeTableViewCellDelegate {
         let style:SwipeCellKit.SwipeActionStyle = .destructive
         let trashRestoreAction = SwipeAction(style: style, title: nil) { action, indexPath in
             print("trash action")
+            self.numberOfNotes -= 1
+            action.fulfill(with: .delete)
+            self.tableView.deleteRows(at: [indexPath], with: .fade)
         }
         trashRestoreAction.hidesWhenSelected = true
         trashRestoreAction.image = UIImage(systemName: "trash", withConfiguration: configuration)
@@ -64,6 +69,7 @@ extension ViewController: SwipeTableViewCellDelegate {
         let pinAction = SwipeAction(style: .default, title: nil) { action, indexPath in
             print("pin action")
         }
+        pinAction.hidesWhenSelected = true
         pinAction.image = UIImage(systemName: "pin", withConfiguration: configuration)
         actions.append(pinAction)
         
@@ -71,6 +77,7 @@ extension ViewController: SwipeTableViewCellDelegate {
         let testAction = SwipeAction(style: .default, title: nil) { action, indexPath in
             print("share action")
         }
+        testAction.hidesWhenSelected = true
         testAction.image = UIImage(systemName: "square.and.arrow.up", withConfiguration: configuration)
         actions.append(testAction)
         

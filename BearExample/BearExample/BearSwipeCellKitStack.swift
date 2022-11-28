@@ -109,7 +109,7 @@ public class BearSwipeController: SwipeController {
         guard let swipeable = self.swipeable, let _ = self.actionsContainerView else { return }
         guard let actionsView = swipeable.actionsView, let indexPath = swipeable.indexPath else { return }
 
-        let newCenter = swipeable.bounds.midX - (swipeable.bounds.width + actionsView.minimumButtonWidth) * actionsView.orientation.scale
+        let newCenter = -swipeable.bounds.size.width / 2
         
         action.completionHandler = { [weak self] style in
             guard let `self` = self else { return }
@@ -129,7 +129,26 @@ public class BearSwipeController: SwipeController {
                     if fillOption.timing == .after {
                         actionsView.alpha = 0
                     }
+                  
+                    // Animating the buttons to alpha 0
+                    if let swipeable = self.swipeable as? NoteTableCellView,
+                       let actionsView = swipeable.bearActionsView {
+                        for button in actionsView.buttons {
+                            button.alpha = 0
+                        }
+                    }
                 })
+                // Quickly animating the image views of the buttons to alpha 0
+                UIView.animate(withDuration: 0.15) {
+                    if let swipeable = self.swipeable as? NoteTableCellView,
+                       let actionsView = swipeable.bearActionsView {
+                        for button in actionsView.buttons {
+                            if let button = button as? BearSwipeActionButton {
+                                button.bearImageView?.alpha = 0
+                            }
+                        }
+                    }
+                }
             case .reset:
                 self.hideSwipe(animated: true)
             }
@@ -297,6 +316,8 @@ class BearSwipeActionButtonWrapperView: SwipeActionButtonWrapperView {
 
 class BearSwipeActionButton: SwipeActionButton {
     
+    var bearImageView: UIImageView?
+    
     override func configure(with action: SwipeAction) {
         if let image = action.image {
             let imageView = UIImageView()
@@ -311,15 +332,19 @@ class BearSwipeActionButton: SwipeActionButton {
             imageView.setContentCompressionResistancePriority(UILayoutPriority.init(1), for: .vertical)
             let imagePadding = spacing
             let topConstraint = imageView.topAnchor.constraint(greaterThanOrEqualTo: self.topAnchor, constant: imagePadding)
+            topConstraint.priority = .defaultLow
             topConstraint.isActive = true
             let trailingConstraint = imageView.trailingAnchor.constraint(greaterThanOrEqualTo: self.trailingAnchor, constant: -imagePadding)
             trailingConstraint.priority = .defaultLow
             trailingConstraint.isActive = true
             let bottomConstraint = imageView.bottomAnchor.constraint(greaterThanOrEqualTo: self.bottomAnchor, constant: -imagePadding)
+            bottomConstraint.priority = .defaultLow
             bottomConstraint.isActive = true
             let leadingConstraint = imageView.leadingAnchor.constraint(greaterThanOrEqualTo: self.leadingAnchor, constant: imagePadding)
             leadingConstraint.priority = .defaultLow
             leadingConstraint.isActive = true
+            
+            self.bearImageView = imageView
         }
         
     }
