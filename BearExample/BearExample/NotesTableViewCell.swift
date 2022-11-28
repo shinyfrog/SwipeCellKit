@@ -8,7 +8,7 @@
 import Foundation
 import SwipeCellKit
 
-class NotesTableViewCell: SwipeTableViewCell {
+class NoteTableCellView: SwipeTableViewCell {
     // MARK: - Custom SwipeController
     
     var bearActionsView: BearSwipeActionsView?
@@ -18,5 +18,9 @@ class NotesTableViewCell: SwipeTableViewCell {
         super.configure()
         self.swipeController = BearSwipeController(swipeable: self, actionsContainerView: self)
         self.swipeController.delegate = self
+    }
+    
+    public override func swipeController(_ controller: SwipeController, didDeleteSwipeableAt indexPath: IndexPath) {
+        print("hello")
     }
 }

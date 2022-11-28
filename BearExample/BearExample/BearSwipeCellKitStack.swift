@@ -15,7 +15,7 @@ public class BearSwipeController: SwipeController {
     open override func configureActionsView(with actions: [SwipeAction], for orientation: SwipeActionsOrientation) {
         super.configureActionsView(with: actions, for: orientation)
         
-        guard let swipeable = self.swipeable as? NotesTableViewCell,
+        guard let swipeable = self.swipeable as? NoteTableCellView,
               let actionsContainerView = self.actionsContainerView,
               let scrollView = self.scrollView else {
             return
@@ -79,7 +79,7 @@ public class BearSwipeController: SwipeController {
     public override func reset() {
         super.reset()
         
-        guard let swipeable = self.swipeable as? NotesTableViewCell,
+        guard let swipeable = self.swipeable as? NoteTableCellView,
               let actionsContainerView = self.actionsContainerView,
               let _ = swipeable.bearActionsView else {
             return
@@ -94,7 +94,7 @@ public class BearSwipeController: SwipeController {
     
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         
-        if let notesTableViewCell = self.swipeable as? NotesTableViewCell, let object = object as? NotesTableViewCell, object == notesTableViewCell {
+        if let notesTableViewCell = self.swipeable as? NoteTableCellView, let object = object as? NoteTableCellView, object == notesTableViewCell {
             if keyPath == "center" {
                 guard let bearActionsView = notesTableViewCell.bearActionsView else { return }
                 let visibleWidth = max(0, bearActionsView.orientation == .right ? -notesTableViewCell.frame.origin.x : notesTableViewCell.frame.origin.x)
@@ -102,6 +102,55 @@ public class BearSwipeController: SwipeController {
                 notesTableViewCell.bearActionsViewWidthConstraint?.constant = visibleWidth
                 bearActionsView.stackView?.alpha = delta
             }
+        }
+    }
+    
+    public override func performFillAction(action: SwipeAction, fillOption: SwipeExpansionStyle.FillOptions) {
+        guard let swipeable = self.swipeable, let _ = self.actionsContainerView else { return }
+        guard let actionsView = swipeable.actionsView, let indexPath = swipeable.indexPath else { return }
+
+        let newCenter = swipeable.bounds.midX - (swipeable.bounds.width + actionsView.minimumButtonWidth) * actionsView.orientation.scale
+        
+        action.completionHandler = { [weak self] style in
+            guard let `self` = self else { return }
+            action.completionHandler = nil
+            
+            self.delegate?.swipeController(self, didEndEditingSwipeableFor: actionsView.orientation)
+            
+            switch style {
+            case .delete:
+                UIView.animate(withDuration: 0.3, animations: {
+                    guard let actionsContainerView = self.actionsContainerView else { return }
+                    
+                    actionsContainerView.center.x = newCenter
+                    actionsContainerView.mask?.frame.size.height = 0
+                    swipeable.actionsView?.visibleWidth = abs(actionsContainerView.frame.minX)
+                    
+                    if fillOption.timing == .after {
+                        actionsView.alpha = 0
+                    }
+                })
+            case .reset:
+                self.hideSwipe(animated: true)
+            }
+        }
+        
+        let invokeAction = {
+            action.handler?(action, indexPath)
+            
+            if let style = fillOption.autoFulFillmentStyle {
+                action.fulfill(with: style)
+            }
+        }
+        
+        self.animate(duration: 0.3, toOffset: newCenter) { _ in
+            if fillOption.timing == .after {
+                invokeAction()
+            }
+        }
+        
+        if fillOption.timing == .with {
+            invokeAction()
         }
     }
     

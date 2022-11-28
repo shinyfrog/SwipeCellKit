@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
+        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
@@ -20,7 +21,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="BearTestCell" id="f8e-sU-dqD" customClass="NotesTableViewCell" customModule="BearExample" customModuleProvider="target">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="NoteTableCellView" id="f8e-sU-dqD" customClass="NoteTableCellView" customModule="BearExample" customModuleProvider="target">
                                         <rect key="frame" x="20" y="55.333332061767578" width="353" height="43.666667938232422"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="f8e-sU-dqD" id="tA7-PH-y7W">
@@ -35,7 +36,7 @@
                                                 </label>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="GDG-s1-sJ0" secondAttribute="trailing" id="PDy-my-abt"/>
+                                                <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="GDG-s1-sJ0" secondAttribute="trailing" constant="272" id="PDy-my-abt"/>
                                                 <constraint firstItem="GDG-s1-sJ0" firstAttribute="leading" secondItem="tA7-PH-y7W" secondAttribute="leading" constant="20" symbolic="YES" id="fg8-5H-WKH"/>
                                                 <constraint firstItem="GDG-s1-sJ0" firstAttribute="centerY" secondItem="tA7-PH-y7W" secondAttribute="centerY" id="rRQ-Lu-EPK"/>
                                             </constraints>

@@ -25,7 +25,7 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "BearTestCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "NoteTableCellView", for: indexPath)
         if let cell = cell as? SwipeTableViewCell {
             cell.delegate = self
         }
@@ -47,7 +47,6 @@ extension ViewController: SwipeTableViewCellDelegate {
     }
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeCellKit.SwipeActionsOrientation) -> [SwipeCellKit.SwipeAction]? {
-        guard orientation == .right else { return nil }
         let configuration = UIImage.SymbolConfiguration(pointSize: 28, weight: .regular)
         var actions:[SwipeCellKit.SwipeAction] = []
         
