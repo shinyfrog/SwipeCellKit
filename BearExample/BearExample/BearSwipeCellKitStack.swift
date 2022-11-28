@@ -256,27 +256,5 @@ class BearSwipeActionButton: SwipeActionButton {
         }
         
     }
-//    var imageViewMinimumPadding: CGFloat = 6
-//
-//    public convenience init(action: SwipeAction) {
-//        self.init(frame: .zero)
-//        self.configure(with: action)
-//    }
-//
-//    open override func imageRect(forContentRect contentRect: CGRect) -> CGRect {
-//        var rect = super.imageRect(forContentRect: contentRect)
-//        let minimumWidth = self.frame.size.width - self.imageViewMinimumPadding * 2
-//        if rect.size.width > minimumWidth {
-//            let delta = minimumWidth / rect.size.width
-//            rect.origin.x += (rect.size.width - rect.size.width * delta) / 2
-//            rect.origin.y += (rect.size.height - rect.size.height * delta) / 2
-//            rect.size.width = rect.size.width * delta
-//            rect.size.height = rect.size.height * delta
-//
-//        }
-//
-//
-//        return rect
-//    }
     
 }
