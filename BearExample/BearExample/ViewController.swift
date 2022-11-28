@@ -47,6 +47,7 @@ extension ViewController: SwipeTableViewCellDelegate {
     }
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeCellKit.SwipeActionsOrientation) -> [SwipeCellKit.SwipeAction]? {
+        guard orientation == .right else { return nil }
         let configuration = UIImage.SymbolConfiguration(pointSize: 28, weight: .regular)
         var actions:[SwipeCellKit.SwipeAction] = []
         

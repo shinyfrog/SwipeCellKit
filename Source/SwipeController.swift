@@ -26,7 +26,7 @@ public protocol SwipeControllerDelegate: AnyObject {
     
 }
 
-open class SwipeController: NSObject {
+open class SwipeController: NSObject, UIGestureRecognizerDelegate {
     
     public weak var swipeable: (UIView & Swipeable)?
     open weak var actionsContainerView: UIView?
@@ -42,7 +42,7 @@ open class SwipeController: NSObject {
     var scrollRatio: CGFloat = 1.0
     public var originalLayoutMargins: UIEdgeInsets = .zero
     
-    lazy var panGestureRecognizer: UIPanGestureRecognizer = {
+    public lazy var panGestureRecognizer: UIPanGestureRecognizer = {
         let gesture = UIPanGestureRecognizer(target: self, action: #selector(handlePan(gesture:)))
         gesture.delegate = self
         return gesture
@@ -396,10 +396,10 @@ open class SwipeController: NSObject {
             invokeAction()
         }
     }
-}
-
-extension SwipeController: UIGestureRecognizerDelegate {
-    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+    
+    // MARK: - UIGestureRecognizerDelegate
+    
+    @objc open func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         if gestureRecognizer == tapGestureRecognizer {
             if UIAccessibility.isVoiceOverRunning {
                 scrollView?.hideSwipeables()
@@ -407,16 +407,16 @@ extension SwipeController: UIGestureRecognizerDelegate {
             
             let swipedCell = scrollView?.swipeables.first(where: {
                 $0.state.isActive ||
-                    $0.panGestureRecognizer.state == .began ||
-                    $0.panGestureRecognizer.state == .changed ||
-                    $0.panGestureRecognizer.state == .ended
+                $0.panGestureRecognizer.state == .began ||
+                $0.panGestureRecognizer.state == .changed ||
+                $0.panGestureRecognizer.state == .ended
             })
             return swipedCell == nil ? false : true
         }
         
         if gestureRecognizer == panGestureRecognizer,
-            let view = gestureRecognizer.view,
-            let gestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
+           let view = gestureRecognizer.view,
+           let gestureRecognizer = gestureRecognizer as? UIPanGestureRecognizer {
             let translation = gestureRecognizer.translation(in: view)
             return abs(translation.y) <= abs(translation.x)
         }
