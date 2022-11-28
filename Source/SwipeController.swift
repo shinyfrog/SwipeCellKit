@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public protocol SwipeControllerDelegate: class {
+public protocol SwipeControllerDelegate: AnyObject {
     
     func swipeController(_ controller: SwipeController, canBeginEditingSwipeableFor orientation: SwipeActionsOrientation) -> Bool
     
@@ -29,7 +29,7 @@ public protocol SwipeControllerDelegate: class {
 open class SwipeController: NSObject {
     
     public weak var swipeable: (UIView & Swipeable)?
-    public weak var actionsContainerView: UIView?
+    open weak var actionsContainerView: UIView?
     
     public weak var delegate: SwipeControllerDelegate?
     public weak var scrollView: UIScrollView?
@@ -63,7 +63,7 @@ open class SwipeController: NSObject {
         configure()
     }
 
-    @objc func handlePan(gesture: UIPanGestureRecognizer) {
+    @objc open func handlePan(gesture: UIPanGestureRecognizer) {
         guard let target = actionsContainerView, var swipeable = self.swipeable else { return }
         
         let velocity = gesture.velocity(in: target)
@@ -333,7 +333,7 @@ open class SwipeController: NSObject {
         swipeable?.addGestureRecognizer(panGestureRecognizer)
     }
     
-    func reset() {
+    open func reset() {
         swipeable?.state = .center
         
         swipeable?.actionsView?.removeFromSuperview()

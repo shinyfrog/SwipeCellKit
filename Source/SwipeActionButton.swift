@@ -40,7 +40,10 @@ open class SwipeActionButton: UIButton {
     
     public convenience init(action: SwipeAction) {
         self.init(frame: .zero)
-
+        self.configure(with: action)
+    }
+    
+    open func configure(with action: SwipeAction) {
         contentHorizontalAlignment = .center
         
         tintColor = action.textColor ?? .white
@@ -100,7 +103,7 @@ open class SwipeActionButton: UIButton {
 }
 
 extension CGRect {
-    func center(size: CGSize) -> CGRect {
+    public func center(size: CGSize) -> CGRect {
         let dx = width - size.width
         let dy = height - size.height
         return CGRect(x: origin.x + dx * 0.5, y: origin.y + dy * 0.5, width: size.width, height: size.height)

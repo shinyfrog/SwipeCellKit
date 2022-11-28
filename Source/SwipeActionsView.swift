@@ -7,7 +7,7 @@
 
 import UIKit
 
-public protocol SwipeActionsViewDelegate: class {
+public protocol SwipeActionsViewDelegate: AnyObject {
     func swipeActionsView(_ swipeActionsView: SwipeActionsView, didSelect action: SwipeAction)
 }
 
@@ -43,7 +43,7 @@ open class SwipeActionsView: UIView {
         return orientation == .left ? scrollView.safeAreaInsets.left : scrollView.safeAreaInsets.right
     }
 
-    var visibleWidth: CGFloat = 0 {
+    public var visibleWidth: CGFloat = 0 {
         didSet {
             // If necessary, adjust for safe areas
             visibleWidth = max(0, visibleWidth - safeAreaMargin)
@@ -62,7 +62,7 @@ open class SwipeActionsView: UIView {
         }
     }
 
-    var preferredWidth: CGFloat {
+    public var preferredWidth: CGFloat {
         return minimumButtonWidth * CGFloat(actions.count) + safeAreaMargin
     }
 
@@ -75,7 +75,7 @@ open class SwipeActionsView: UIView {
         }
     }
     
-    private(set) var expanded: Bool = false
+    @objc dynamic public private(set) var expanded: Bool = false
     
     var expandableAction: SwipeAction? {
         return options.expansionStyle != nil ? actions.last : nil
@@ -206,7 +206,7 @@ open class SwipeActionsView: UIView {
         return UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding)
     }
     
-    func setExpanded(expanded: Bool, feedback: Bool = false) {
+    open func setExpanded(expanded: Bool, feedback: Bool = false) {
         guard self.expanded != expanded else { return }
         
         self.expanded = expanded
