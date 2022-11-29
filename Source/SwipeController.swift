@@ -458,7 +458,7 @@ extension SwipeController: SwipeActionsViewDelegate {
         action.handler?(action, indexPath)
     }
     
-    public func hideSwipe(animated: Bool, completion: ((Bool) -> Void)? = nil) {
+    @objc open func hideSwipe(animated: Bool, completion: ((Bool) -> Void)? = nil) {
         guard var swipeable = self.swipeable, let actionsContainerView = self.actionsContainerView else { return }
         guard swipeable.state == .left || swipeable.state == .right else { return }
         guard let actionView = swipeable.actionsView else { return }

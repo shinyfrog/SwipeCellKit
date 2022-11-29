@@ -104,7 +104,7 @@ public class BearSwipeController: SwipeController {
         if let notesTableViewCell = self.swipeable as? NoteTableCellView, let object = object as? NoteTableCellView, object == notesTableViewCell {
             if keyPath == "center" {
                 // Adjusting the position of the masking view
-                notesTableViewCell.maskingContainerView.frame.origin.x = -notesTableViewCell.frame.origin.x
+                notesTableViewCell.maskingContainerView?.frame.origin.x = -notesTableViewCell.frame.origin.x
                 // Setting the Bear Actions View width and the alpha of the buttons
                 guard let bearActionsView = notesTableViewCell.bearActionsView else { return }
                 let visibleWidth = max(0, bearActionsView.orientation == .right ? -notesTableViewCell.frame.origin.x : notesTableViewCell.frame.origin.x)
@@ -119,14 +119,9 @@ public class BearSwipeController: SwipeController {
         guard let swipeable = self.swipeable, let _ = self.actionsContainerView else { return }
         guard let actionsView = swipeable.actionsView, let indexPath = swipeable.indexPath else { return }
 
-        let newCenter = -swipeable.bounds.size.width
+        self.setMaskActive(true)
         
-        if let swipeable = swipeable as? NoteTableCellView {
-            // The buttons are going to fill the cell space, so we want the masking
-            // container view to clip to bounds, in order to prevent the animations
-            // to go outside the bounds of the Table View
-            swipeable.maskingContainerView.clipsToBounds = true
-        }
+        let newCenter = -swipeable.bounds.size.width
         
         action.completionHandler = { [weak self] style in
             guard let `self` = self else { return }
@@ -190,6 +185,11 @@ public class BearSwipeController: SwipeController {
         }
     }
     
+    public override func hideSwipe(animated: Bool, completion: ((Bool) -> Void)? = nil) {
+        self.setMaskActive(true)
+        super.hideSwipe(animated: animated, completion: completion)
+    }
+    
     public override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
         var result = super.gestureRecognizerShouldBegin(gestureRecognizer)
         if gestureRecognizer == panGestureRecognizer,
@@ -206,6 +206,15 @@ public class BearSwipeController: SwipeController {
             result = result && ((translation.x < 0 && hasRightActions) || (translation.x > 0 && hasLeftActions) || (actionsViewVisible))
         }
         return result
+    }
+    
+    private func setMaskActive(_ flag: Bool) {
+        if let swipeable = self.swipeable as? NoteTableCellView {
+            // The buttons are going to fill the cell space, so we want the masking
+            // container view to clip to bounds, in order to prevent the animations
+            // to go outside the bounds of the Table View
+            swipeable.maskingContainerView?.clipsToBounds = flag
+        }
     }
 }
 

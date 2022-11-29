@@ -58,7 +58,6 @@ extension ViewController: SwipeTableViewCellDelegate {
         let trashRestoreAction = SwipeAction(style: style, title: nil) { action, indexPath in
             print("trash action")
             self.numberOfNotes -= 1
-            action.fulfill(with: .delete)
             self.tableView.deleteRows(at: [indexPath], with: .fade)
         }
         trashRestoreAction.hidesWhenSelected = true
