@@ -147,6 +147,9 @@ public class BearSwipeController: SwipeController {
                        let actionsView = swipeable.bearActionsView {
                         for button in actionsView.buttons {
                             button.alpha = 0
+                            if let button = button as? BearSwipeActionButton {
+                                button.wrapperView?.layer.cornerRadius = 0
+                            }
                         }
                     }
                 })
@@ -293,7 +296,7 @@ public class BearSwipeActionsView: SwipeActionsView {
         stackViewWidthConstraint.priority = .required
         stackViewWidthConstraint.isActive = true
         
-        let buttons: [SwipeActionButton] = actions.map({ action in
+        let buttons: [BearSwipeActionButton] = actions.map({ action in
             let actionButton = BearSwipeActionButton(action: action)
             actionButton.addTarget(self, action: #selector(actionTapped(button:)), for: .touchUpInside)
             return actionButton
@@ -306,6 +309,7 @@ public class BearSwipeActionsView: SwipeActionsView {
             
             stackView.addArrangedSubview(wrapperView)
             
+            button.wrapperView = wrapperView
             button.translatesAutoresizingMaskIntoConstraints = false
             button.topAnchor.constraint(equalTo: wrapperView.topAnchor).isActive = true
             button.trailingAnchor.constraint(equalTo: wrapperView.trailingAnchor).isActive = true
@@ -344,6 +348,7 @@ class BearSwipeActionButtonWrapperView: SwipeActionButtonWrapperView {
 
 class BearSwipeActionButton: SwipeActionButton {
     
+    weak var wrapperView: BearSwipeActionButtonWrapperView?
     var bearImageView: UIImageView?
     
     override func configure(with action: SwipeAction) {
