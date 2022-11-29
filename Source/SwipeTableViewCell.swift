@@ -34,7 +34,7 @@ open class SwipeTableViewCell: UITableViewCell, SwipeControllerDelegate {
     open var swipeController: SwipeController!
     var isPreviouslySelected = false
     
-    weak var tableView: UITableView?
+    public weak var tableView: UITableView?
     
     /// :nodoc:
     open override var frame: CGRect {

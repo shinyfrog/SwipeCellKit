@@ -10,9 +10,16 @@ import SwipeCellKit
 
 class NoteTableCellView: SwipeTableViewCell {
     
+    deinit {
+        self.deinitCustomSwipe()
+    }
+    
     // MARK: - Custom SwipeController
     
     var masksToBoundsObservation: NSKeyValueObservation?
+    
+    // Used for for masking the filling action of the cells
+    var maskingContainerView: UIView!
     
     var bearActionsView: BearSwipeActionsView?
     var bearActionsViewWidthConstraint: NSLayoutConstraint?
@@ -32,8 +39,19 @@ class NoteTableCellView: SwipeTableViewCell {
         }
     }
     
-    deinit {
+    private func deinitCustomSwipe() {
+        self.masksToBoundsObservation?.invalidate()
         self.masksToBoundsObservation = nil
+    }
+    
+    open override func swipeController(_ controller: SwipeController, willBeginEditingSwipeableFor orientation: SwipeActionsOrientation) {
+        guard let tableView = self.tableView, let indexPath = tableView.indexPath(for: self) else { return }
+        delegate?.tableView(tableView, willBeginEditingRowAt: indexPath, for: orientation)
+    }
+    
+    open override func swipeController(_ controller: SwipeController, didEndEditingSwipeableFor orientation: SwipeActionsOrientation) {
+        guard let tableView = tableView, let indexPath = tableView.indexPath(for: self), let actionsView = self.actionsView else { return }
+        delegate?.tableView(tableView, didEndEditingRowAt: indexPath, for: actionsView.orientation)
     }
     
     public override func swipeController(_ controller: SwipeController, didDeleteSwipeableAt indexPath: IndexPath) {

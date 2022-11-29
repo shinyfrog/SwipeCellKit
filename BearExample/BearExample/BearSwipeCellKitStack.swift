@@ -23,7 +23,9 @@ public class BearSwipeController: SwipeController {
         
         let options = self.delegate?.swipeController(self, editActionsOptionsForSwipeableFor: orientation) ?? SwipeOptions()
         
-        // Removing the previous one if any
+        // Removing the previous views if any
+        swipeable.maskingContainerView?.removeFromSuperview()
+        swipeable.maskingContainerView = nil
         swipeable.bearActionsView?.removeFromSuperview()
         swipeable.bearActionsView = nil
         
@@ -48,8 +50,13 @@ public class BearSwipeController: SwipeController {
         actionsView.delegate = self
         
         
-        //        let actionViewWrappingView = UIView()
-        actionsContainerView.addSubview(actionsView)
+        swipeable.maskingContainerView = UIView(frame: actionsContainerView.bounds)
+        // While the user is dragging we want the mask to be disabled, in order to see
+        // the buttons appear from outside the bounds of the Table View
+        swipeable.maskingContainerView.clipsToBounds = false
+        actionsContainerView.addSubview(swipeable.maskingContainerView)
+        
+        swipeable.maskingContainerView.addSubview(actionsView)
         actionsView.translatesAutoresizingMaskIntoConstraints = false
         actionsView.heightAnchor.constraint(equalTo: actionsContainerView.heightAnchor).isActive = true
         actionsView.topAnchor.constraint(equalTo: actionsContainerView.topAnchor).isActive = true
@@ -96,6 +103,9 @@ public class BearSwipeController: SwipeController {
         
         if let notesTableViewCell = self.swipeable as? NoteTableCellView, let object = object as? NoteTableCellView, object == notesTableViewCell {
             if keyPath == "center" {
+                // Adjusting the position of the masking view
+                notesTableViewCell.maskingContainerView.frame.origin.x = -notesTableViewCell.frame.origin.x
+                // Setting the Bear Actions View width and the alpha of the buttons
                 guard let bearActionsView = notesTableViewCell.bearActionsView else { return }
                 let visibleWidth = max(0, bearActionsView.orientation == .right ? -notesTableViewCell.frame.origin.x : notesTableViewCell.frame.origin.x)
                 let delta = min(1, visibleWidth / bearActionsView.buttonsShowingAlphaTreshold())
@@ -109,7 +119,14 @@ public class BearSwipeController: SwipeController {
         guard let swipeable = self.swipeable, let _ = self.actionsContainerView else { return }
         guard let actionsView = swipeable.actionsView, let indexPath = swipeable.indexPath else { return }
 
-        let newCenter = -swipeable.bounds.size.width / 2
+        let newCenter = -swipeable.bounds.size.width
+        
+        if let swipeable = swipeable as? NoteTableCellView {
+            // The buttons are going to fill the cell space, so we want the masking
+            // container view to clip to bounds, in order to prevent the animations
+            // to go outside the bounds of the Table View
+            swipeable.maskingContainerView.clipsToBounds = true
+        }
         
         action.completionHandler = { [weak self] style in
             guard let `self` = self else { return }
@@ -190,12 +207,11 @@ public class BearSwipeController: SwipeController {
         }
         return result
     }
-    
 }
 
 public class BearSwipeActionsView: SwipeActionsView {
     
-    var containerView: UIView!
+    var stackViewContainerView: UIView!
     var stackView: UIStackView?
     
     var buttonMinimumWidthConstant:CGFloat = 30
@@ -205,16 +221,16 @@ public class BearSwipeActionsView: SwipeActionsView {
         return numberOfButtons * self.buttonMinimumWidthConstant + (numberOfButtons - 1) * (self.stackView?.spacing ?? 0)
     }
     
-    private func configureContainerViewIfNeeded() {
-        guard self.containerView == nil else { return }
-        self.containerView = UIView()
-        self.containerView.clipsToBounds = false
-        self.addSubview(self.containerView)
-        self.containerView.translatesAutoresizingMaskIntoConstraints = false
-        self.containerView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        self.containerView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
-        self.containerView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        self.containerView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+    private func configureStackViewContainerViewIfNeeded() {
+        guard self.stackViewContainerView == nil else { return }
+        self.stackViewContainerView = UIView()
+        self.stackViewContainerView.clipsToBounds = false
+        self.addSubview(self.stackViewContainerView)
+        self.stackViewContainerView.translatesAutoresizingMaskIntoConstraints = false
+        self.stackViewContainerView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        self.stackViewContainerView.trailingAnchor.constraint(equalTo: self.trailingAnchor).isActive = true
+        self.stackViewContainerView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        self.stackViewContainerView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
     }
     
     open override func addButtons(for actions: [SwipeAction], withMaximum size: CGSize, contentEdgeInsets: UIEdgeInsets) -> [SwipeActionButton] {
@@ -224,8 +240,8 @@ public class BearSwipeActionsView: SwipeActionsView {
         // have the stack view aligned to the trailing (it seems like it fails to
         // calculate the horizontal stack, even if the actual self (MailSwipeActionsView)
         // is sized correctly
-        self.configureContainerViewIfNeeded()
-        let stackViewSuperView = self.containerView! // self
+        self.configureStackViewContainerViewIfNeeded()
+        let stackViewSuperView = self.stackViewContainerView! // self
         
         self.clipsToBounds = false
         self.backgroundColor = .clear
@@ -295,7 +311,9 @@ public class BearSwipeActionsView: SwipeActionsView {
         UIView.animate(withDuration: 0.25, delay: 0) {
             for (index, view) in stackView.arrangedSubviews.enumerated() {
                 if index < stackView.arrangedSubviews.count - 1 {
-                    view.isHidden = expanded ? true : false
+                    let hasToHideButton = expanded ? true : false
+                    view.alpha = hasToHideButton ? 0 : 1
+                    view.isHidden = hasToHideButton
                 }
             }
         }
@@ -306,6 +324,7 @@ class BearSwipeActionButtonWrapperView: SwipeActionButtonWrapperView {
     var cornerRadius: CGFloat = 10
     
     override func willMove(toSuperview newSuperview: UIView?) {
+        self.backgroundColor = .clear
         self.layer.cornerRadius = self.cornerRadius
         if #available(iOS 13, *) {
             self.layer.cornerCurve = .continuous
@@ -322,8 +341,8 @@ class BearSwipeActionButton: SwipeActionButton {
         if let image = action.image {
             let imageView = UIImageView()
             imageView.contentMode = .scaleAspectFit
+            imageView.image = image.withRenderingMode(.alwaysTemplate)
             imageView.tintColor = action.textColor
-            imageView.image = image
             self.addSubview(imageView)
             imageView.translatesAutoresizingMaskIntoConstraints = false
             imageView.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
