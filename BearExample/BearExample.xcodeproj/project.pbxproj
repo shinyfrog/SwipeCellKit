@@ -13,10 +13,11 @@
 		9FDAC56E29327A8300A002A9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9FDAC56C29327A8300A002A9 /* Main.storyboard */; };
 		9FDAC57029327A8400A002A9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9FDAC56F29327A8400A002A9 /* Assets.xcassets */; };
 		9FDAC57329327A8400A002A9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9FDAC57129327A8400A002A9 /* LaunchScreen.storyboard */; };
-		9FDAC58129327E6E00A002A9 /* NotesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDAC58029327E6E00A002A9 /* NotesTableViewCell.swift */; };
 		9FDAC5842932837E00A002A9 /* SwipeCellKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FDAC5832932837E00A002A9 /* SwipeCellKit.framework */; };
 		9FDAC5852932837E00A002A9 /* SwipeCellKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9FDAC5832932837E00A002A9 /* SwipeCellKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		9FDAC5882932863000A002A9 /* BearSwipeCellKitStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FDAC5872932863000A002A9 /* BearSwipeCellKitStack.swift */; };
+		9FE8699529421C6200BDD99D /* RoundedSwipeableCellBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FE8699229421C6200BDD99D /* RoundedSwipeableCellBackgroundView.swift */; };
+		9FE8699629421C6200BDD99D /* RoundedSwipeCellKitStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FE8699329421C6200BDD99D /* RoundedSwipeCellKitStack.swift */; };
+		9FE8699729421C6200BDD99D /* RoundedSwipeableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FE8699429421C6200BDD99D /* RoundedSwipeableCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -42,9 +43,10 @@
 		9FDAC56F29327A8400A002A9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9FDAC57229327A8400A002A9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9FDAC57429327A8400A002A9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9FDAC58029327E6E00A002A9 /* NotesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotesTableViewCell.swift; sourceTree = "<group>"; };
 		9FDAC5832932837E00A002A9 /* SwipeCellKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = SwipeCellKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		9FDAC5872932863000A002A9 /* BearSwipeCellKitStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BearSwipeCellKitStack.swift; sourceTree = "<group>"; };
+		9FE8699229421C6200BDD99D /* RoundedSwipeableCellBackgroundView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedSwipeableCellBackgroundView.swift; sourceTree = "<group>"; };
+		9FE8699329421C6200BDD99D /* RoundedSwipeCellKitStack.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedSwipeCellKitStack.swift; sourceTree = "<group>"; };
+		9FE8699429421C6200BDD99D /* RoundedSwipeableCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoundedSwipeableCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,8 +84,9 @@
 				9FDAC56629327A8300A002A9 /* AppDelegate.swift */,
 				9FDAC56829327A8300A002A9 /* SceneDelegate.swift */,
 				9FDAC56A29327A8300A002A9 /* ViewController.swift */,
-				9FDAC58029327E6E00A002A9 /* NotesTableViewCell.swift */,
-				9FDAC5872932863000A002A9 /* BearSwipeCellKitStack.swift */,
+				9FE8699429421C6200BDD99D /* RoundedSwipeableCell.swift */,
+				9FE8699229421C6200BDD99D /* RoundedSwipeableCellBackgroundView.swift */,
+				9FE8699329421C6200BDD99D /* RoundedSwipeCellKitStack.swift */,
 				9FDAC56C29327A8300A002A9 /* Main.storyboard */,
 				9FDAC56F29327A8400A002A9 /* Assets.xcassets */,
 				9FDAC57129327A8400A002A9 /* LaunchScreen.storyboard */,
@@ -174,8 +177,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				9FDAC56B29327A8300A002A9 /* ViewController.swift in Sources */,
-				9FDAC58129327E6E00A002A9 /* NotesTableViewCell.swift in Sources */,
-				9FDAC5882932863000A002A9 /* BearSwipeCellKitStack.swift in Sources */,
+				9FE8699529421C6200BDD99D /* RoundedSwipeableCellBackgroundView.swift in Sources */,
+				9FE8699729421C6200BDD99D /* RoundedSwipeableCell.swift in Sources */,
+				9FE8699629421C6200BDD99D /* RoundedSwipeCellKitStack.swift in Sources */,
 				9FDAC56729327A8300A002A9 /* AppDelegate.swift in Sources */,
 				9FDAC56929327A8300A002A9 /* SceneDelegate.swift in Sources */,
 			);

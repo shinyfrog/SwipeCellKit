@@ -1,6 +1,5 @@
 //
-//  BearSwipeCellKitStack.swift
-//  BearExample
+//  RoundedSwipeCellKitStack.swift
 //
 //  Created by Konstantin Victorovich Erokhin on 26/11/22.
 //
@@ -8,14 +7,17 @@
 import Foundation
 import SwipeCellKit
 
-public class BearSwipeController: SwipeController {
+/// This is the override stack for the SwipeCellKit in order to make it work with
+/// our autolayout Buttons (RoundedSwipeActionButton) inside a StackView (RoundedSwipeActionsView.stackView)
+
+public class RoundedSwipeController: SwipeController {
     
     var expandedObservation: NSKeyValueObservation?
     
     open override func configureActionsView(with actions: [SwipeAction], for orientation: SwipeActionsOrientation) {
         super.configureActionsView(with: actions, for: orientation)
         
-        guard let swipeable = self.swipeable as? NoteTableCellView,
+        guard let swipeable = self.swipeable as? RoundedSwipeableCell,
               let actionsContainerView = self.actionsContainerView,
               let scrollView = self.scrollView else {
             return
@@ -26,8 +28,8 @@ public class BearSwipeController: SwipeController {
         // Removing the previous views if any
         swipeable.maskingContainerView?.removeFromSuperview()
         swipeable.maskingContainerView = nil
-        swipeable.bearActionsView?.removeFromSuperview()
-        swipeable.bearActionsView = nil
+        swipeable.roundedActionsView?.removeFromSuperview()
+        swipeable.roundedActionsView = nil
         
         var contentEdgeInsets = UIEdgeInsets.zero
         if let visibleTableViewRect = delegate?.swipeController(self, visibleRectFor: scrollView) {
@@ -41,7 +43,7 @@ public class BearSwipeController: SwipeController {
             }
         }
         
-        let actionsView = BearSwipeActionsView(contentEdgeInsets: contentEdgeInsets,
+        let actionsView = RoundedSwipeActionsView(contentEdgeInsets: contentEdgeInsets,
                                                maxSize: swipeable.bounds.size,
                                                safeAreaInsetView: scrollView,
                                                options: options,
@@ -67,15 +69,15 @@ public class BearSwipeController: SwipeController {
         }
         
         // This will be changed during the pan
-        swipeable.bearActionsViewWidthConstraint = actionsView.widthAnchor.constraint(equalToConstant: 0)
-        swipeable.bearActionsViewWidthConstraint?.isActive = true
+        swipeable.roundedActionsViewWidthConstraint = actionsView.widthAnchor.constraint(equalToConstant: 0)
+        swipeable.roundedActionsViewWidthConstraint?.isActive = true
         
-        swipeable.bearActionsView = actionsView
+        swipeable.roundedActionsView = actionsView
         
         actionsContainerView.addObserver(self, forKeyPath: "center", context: nil)
         if let actionsView = swipeable.actionsView {
             self.expandedObservation = actionsView.observe(\.expanded, options: [.old, .new]) { view, change in
-                swipeable.bearActionsView?.setExpanded(expanded: change.newValue ?? false, feedback: false)
+                swipeable.roundedActionsView?.setExpanded(expanded: change.newValue ?? false, feedback: false)
             }
         }
         
@@ -86,14 +88,17 @@ public class BearSwipeController: SwipeController {
     public override func reset() {
         super.reset()
         
-        guard let swipeable = self.swipeable as? NoteTableCellView,
+        guard let swipeable = self.swipeable as? RoundedSwipeableCell,
               let actionsContainerView = self.actionsContainerView,
-              let _ = swipeable.bearActionsView else {
+              let _ = swipeable.roundedActionsView else {
             return
         }
         
-        swipeable.bearActionsView?.removeFromSuperview()
-        swipeable.bearActionsView = nil
+        swipeable.maskingContainerView.removeFromSuperview()
+        swipeable.maskingContainerView = nil
+        
+        swipeable.roundedActionsView?.removeFromSuperview()
+        swipeable.roundedActionsView = nil
         
         actionsContainerView.removeObserver(self, forKeyPath: "center", context: nil)
         self.expandedObservation = nil
@@ -101,16 +106,16 @@ public class BearSwipeController: SwipeController {
     
     public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         
-        if let notesTableViewCell = self.swipeable as? NoteTableCellView, let object = object as? NoteTableCellView, object == notesTableViewCell {
+        if let notesTableViewCell = self.swipeable as? RoundedSwipeableCell, let object = object as? RoundedSwipeableCell, object == notesTableViewCell {
             if keyPath == "center" {
                 // Adjusting the position of the masking view
                 notesTableViewCell.maskingContainerView?.frame.origin.x = -notesTableViewCell.frame.origin.x
-                // Setting the Bear Actions View width and the alpha of the buttons
-                guard let bearActionsView = notesTableViewCell.bearActionsView else { return }
-                let visibleWidth = max(0, bearActionsView.orientation == .right ? -notesTableViewCell.frame.origin.x : notesTableViewCell.frame.origin.x)
-                let delta = min(1, visibleWidth / bearActionsView.buttonsShowingAlphaTreshold())
-                notesTableViewCell.bearActionsViewWidthConstraint?.constant = visibleWidth
-                bearActionsView.stackView?.alpha = delta
+                // Setting the Rounded Actions View width and the alpha of the buttons
+                guard let roundedActionsView = notesTableViewCell.roundedActionsView else { return }
+                let visibleWidth = max(0, roundedActionsView.orientation == .right ? -notesTableViewCell.frame.origin.x : notesTableViewCell.frame.origin.x)
+                let delta = min(1, visibleWidth / roundedActionsView.buttonsShowingAlphaTreshold())
+                notesTableViewCell.roundedActionsViewWidthConstraint?.constant = visibleWidth
+                roundedActionsView.stackView?.alpha = delta
             }
         }
     }
@@ -143,11 +148,11 @@ public class BearSwipeController: SwipeController {
                     }
                   
                     // Animating the buttons to alpha 0
-                    if let swipeable = self.swipeable as? NoteTableCellView,
-                       let actionsView = swipeable.bearActionsView {
+                    if let swipeable = self.swipeable as? RoundedSwipeableCell,
+                       let actionsView = swipeable.roundedActionsView {
                         for button in actionsView.buttons {
                             button.alpha = 0
-                            if let button = button as? BearSwipeActionButton {
+                            if let button = button as? RoundedSwipeActionButton {
                                 button.wrapperView?.layer.cornerRadius = 0
                             }
                         }
@@ -155,11 +160,11 @@ public class BearSwipeController: SwipeController {
                 })
                 // Quickly animating the image views of the buttons to alpha 0
                 UIView.animate(withDuration: 0.15) {
-                    if let swipeable = self.swipeable as? NoteTableCellView,
-                       let actionsView = swipeable.bearActionsView {
+                    if let swipeable = self.swipeable as? RoundedSwipeableCell,
+                       let actionsView = swipeable.roundedActionsView {
                         for button in actionsView.buttons {
-                            if let button = button as? BearSwipeActionButton {
-                                button.bearImageView?.alpha = 0
+                            if let button = button as? RoundedSwipeActionButton {
+                                button.roundedImageView?.alpha = 0
                             }
                         }
                     }
@@ -212,7 +217,7 @@ public class BearSwipeController: SwipeController {
     }
     
     private func setMaskActive(_ flag: Bool) {
-        if let swipeable = self.swipeable as? NoteTableCellView {
+        if let swipeable = self.swipeable as? RoundedSwipeableCell {
             // The buttons are going to fill the cell space, so we want the masking
             // container view to clip to bounds, in order to prevent the animations
             // to go outside the bounds of the Table View
@@ -221,7 +226,7 @@ public class BearSwipeController: SwipeController {
     }
 }
 
-public class BearSwipeActionsView: SwipeActionsView {
+public class RoundedSwipeActionsView: SwipeActionsView {
     
     var stackViewContainerView: UIView!
     var stackView: UIStackView?
@@ -296,14 +301,14 @@ public class BearSwipeActionsView: SwipeActionsView {
         stackViewWidthConstraint.priority = .required
         stackViewWidthConstraint.isActive = true
         
-        let buttons: [BearSwipeActionButton] = actions.map({ action in
-            let actionButton = BearSwipeActionButton(action: action)
+        let buttons: [RoundedSwipeActionButton] = actions.map({ action in
+            let actionButton = RoundedSwipeActionButton(action: action)
             actionButton.addTarget(self, action: #selector(actionTapped(button:)), for: .touchUpInside)
             return actionButton
         })
         buttons.enumerated().forEach { (index, button) in
             let action = actions[index]
-            let wrapperView = BearSwipeActionButtonWrapperView(frame: frame, action: action, orientation: orientation, contentWidth: minimumButtonWidth)
+            let wrapperView = RoundedSwipeActionButtonWrapperView(frame: frame, action: action, orientation: orientation, contentWidth: minimumButtonWidth)
             wrapperView.translatesAutoresizingMaskIntoConstraints = false
             wrapperView.addSubview(button)
             
@@ -333,7 +338,7 @@ public class BearSwipeActionsView: SwipeActionsView {
     }
 }
 
-class BearSwipeActionButtonWrapperView: SwipeActionButtonWrapperView {
+class RoundedSwipeActionButtonWrapperView: SwipeActionButtonWrapperView {
     var cornerRadius: CGFloat = 10
     
     override func willMove(toSuperview newSuperview: UIView?) {
@@ -346,10 +351,10 @@ class BearSwipeActionButtonWrapperView: SwipeActionButtonWrapperView {
     }
 }
 
-class BearSwipeActionButton: SwipeActionButton {
+class RoundedSwipeActionButton: SwipeActionButton {
     
-    weak var wrapperView: BearSwipeActionButtonWrapperView?
-    var bearImageView: UIImageView?
+    weak var wrapperView: RoundedSwipeActionButtonWrapperView?
+    var roundedImageView: UIImageView?
     
     override func configure(with action: SwipeAction) {
         if let image = action.image {
@@ -377,7 +382,7 @@ class BearSwipeActionButton: SwipeActionButton {
             leadingConstraint.priority = .defaultLow
             leadingConstraint.isActive = true
             
-            self.bearImageView = imageView
+            self.roundedImageView = imageView
         }
         
     }

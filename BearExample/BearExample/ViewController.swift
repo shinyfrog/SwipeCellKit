@@ -27,9 +27,14 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "NoteTableCellView", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "RoundedSwipeableCell", for: indexPath)
         if let cell = cell as? SwipeTableViewCell {
             cell.delegate = self
+        }
+        if let cell = cell as? RoundedSwipeableCell {
+            cell.roundedSwipeableTableViewCellDelegate = self
+            cell.selectionBackgroundColor = .red
+            cell.highlightBackgroundColor = .red.withAlphaComponent(0.5)
         }
         return cell
     }
@@ -94,6 +99,43 @@ extension ViewController: SwipeTableViewCellDelegate {
             }
         }
         return actions
+    }
+    
+}
+
+extension ViewController: RoundedSwipeableTableViewCellDelegate {
+    
+    // MARK: - RoundedSwipeableTableViewCellDelegate
+    
+    public func nextCell(for cell: RoundedSwipeableCell) -> RoundedSwipeableCell? {
+        guard let indexPath = self.tableView.indexPath(for: cell) else { return nil }
+        if indexPath.row + 1 < self.tableView.numberOfRows(inSection: 0) {
+            let nextRow = IndexPath(row: indexPath.row + 1, section: 0)
+            if let typedCell = self.tableView.cellForRow(at: nextRow) as? RoundedSwipeableCell {
+                return typedCell
+            }
+        }
+        return nil
+    }
+    
+    public func previousCell(for cell: RoundedSwipeableCell) -> RoundedSwipeableCell? {
+        guard let indexPath = self.tableView.indexPath(for: cell) else { return nil }
+        if indexPath.row > 0 {
+            let previousRow = IndexPath(row: indexPath.row - 1, section: 0)
+            if let typedCell = self.tableView.cellForRow(at: previousRow) as? RoundedSwipeableCell {
+                return typedCell
+            }
+        }
+        return nil
+    }
+    
+    public func redrawContigousCells(for cell: RoundedSwipeableCell) {
+        self.nextCell(for: cell)?.setNeedsDisplay()
+        self.previousCell(for: cell)?.setNeedsDisplay()
+    }
+    
+    public func isCellActive(_ cell: RoundedSwipeableCell) -> Bool {
+        return cell.isSelected && !self.tableView.isEditing
     }
     
 }
