@@ -146,25 +146,25 @@ public class RoundedSwipeController: SwipeController {
                     if fillOption.timing == .after {
                         actionsView.alpha = 0
                     }
-                  
-                    // Animating the buttons to alpha 0
+                })
+                
+                UIView.animate(withDuration: 0.15) {
+                    // Image views of the buttons to alpha 0
+                    if let swipeable = self.swipeable as? RoundedSwipeableCell,
+                       let actionsView = swipeable.roundedActionsView {
+                        for button in actionsView.buttons {
+                            if let button = button as? RoundedSwipeActionButton {
+                                button.roundedImageView?.alpha = 0
+                            }
+                        }
+                    }
+                    // Animating the buttons corner radii to 0
                     if let swipeable = self.swipeable as? RoundedSwipeableCell,
                        let actionsView = swipeable.roundedActionsView {
                         for button in actionsView.buttons {
                             button.alpha = 0
                             if let button = button as? RoundedSwipeActionButton {
                                 button.wrapperView?.layer.cornerRadius = 0
-                            }
-                        }
-                    }
-                })
-                // Quickly animating the image views of the buttons to alpha 0
-                UIView.animate(withDuration: 0.15) {
-                    if let swipeable = self.swipeable as? RoundedSwipeableCell,
-                       let actionsView = swipeable.roundedActionsView {
-                        for button in actionsView.buttons {
-                            if let button = button as? RoundedSwipeActionButton {
-                                button.roundedImageView?.alpha = 0
                             }
                         }
                     }
