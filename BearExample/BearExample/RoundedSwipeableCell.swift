@@ -57,6 +57,12 @@ open class RoundedSwipeableCell: SwipeTableViewCell {
         }
     }
     
+    @objc public var focusBackgroundColor: UIColor? {
+        didSet {
+            self.setNeedsDisplay()
+        }
+    }
+    
     @objc public var cornerRadius: CGFloat = 5 {
         didSet {
             self.setNeedsDisplay()
@@ -106,6 +112,15 @@ open class RoundedSwipeableCell: SwipeTableViewCell {
         self.masksToBoundsObservation = nil
     }
     
+    // MARK: - Getters
+    
+    @objc
+    open var isSwipeControlsVisible: Bool {
+        get {
+            return self.state != .center
+        }
+    }
+    
     // MARK: - Selection & Highlight
     
     open override func setSelected(_ selected: Bool, animated: Bool) {
@@ -139,6 +154,22 @@ open class RoundedSwipeableCell: SwipeTableViewCell {
         self.isHighlightedForSwipe = highlighted
     }
     
+    private var isFocusedOrIsFocusedAnyOtherSelectedSibling: Bool {
+        get {
+            return self.isFocused || {
+                var isAnyFocused = false
+                guard let tableView = self.tableView, let indexPathsForSelectedRows = tableView.indexPathsForSelectedRows else { return isAnyFocused }
+                for indexPath in indexPathsForSelectedRows {
+                    isAnyFocused = isAnyFocused || tableView.cellForRow(at: indexPath)?.isFocused ?? false
+                    if isAnyFocused {
+                        break
+                    }
+                }
+                return isAnyFocused
+            }()
+        }
+    }
+    
     // MARK: - Selected Background Views Override
     
     private var _backgroundView = RoundedSwipeableCellBackgroundView()
@@ -168,13 +199,14 @@ open class RoundedSwipeableCell: SwipeTableViewCell {
             backgroundView.separatorColor = self.customSeparatorColor
             backgroundView.selectionBackgroundColor = self.selectionBackgroundColor
             backgroundView.highlightBackgroundColor = self.highlightBackgroundColor
+            backgroundView.focusBackgroundColor = self.focusBackgroundColor
             backgroundView.nextCell = self.roundedSwipeableTableViewCellDelegate?.nextCell?(for: self)
             backgroundView.previousCell = self.roundedSwipeableTableViewCellDelegate?.previousCell?(for: self)
             backgroundView.backgroundColor = self.backgroundColor
-            backgroundView.isSelected = self.isSelected
-            backgroundView.isHighlighted = self.isHighlighted || self.isHighlightedForSwipe
+            backgroundView.isCellSelected = self.isSelected
+            backgroundView.isCellHighlighted = self.isHighlighted || self.isHighlightedForSwipe
             // is selection active and actually selected
-            backgroundView.isActive = self.roundedSwipeableTableViewCellDelegate?.isCellActive?(self) ?? false
+            backgroundView.isCellActive = self.isSelected && self.isFocusedOrIsFocusedAnyOtherSelectedSibling
             // Additional drawing elements methods
             backgroundView.drawCustomSeparator = self.drawCustomSeparator
         }
@@ -229,8 +261,7 @@ open class RoundedSwipeableCell: SwipeTableViewCell {
             UIColor.clear.setFill()
         }
         else {
-            self.separatorColor?.setFill()
-            print("\(self) color -> \(self.separatorColor)")
+            self.customSeparatorColor?.setFill()
         }
         bezierPath.fill()
     }

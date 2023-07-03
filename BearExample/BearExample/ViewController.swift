@@ -79,10 +79,12 @@ extension ViewController: SwipeTableViewCellDelegate {
         
         // SHARE
         let testAction = SwipeAction(style: .default, title: nil) { action, indexPath in
-            print("share action")
+            print("delete action")
+            self.numberOfNotes -= 1
+            self.tableView.deleteRows(at: [indexPath], with: .fade)
         }
-        testAction.hidesWhenSelected = true
-        testAction.image = UIImage(systemName: "square.and.arrow.up", withConfiguration: configuration)
+        testAction.hidesWhenSelected = false
+        testAction.image = UIImage(systemName: "delete.left", withConfiguration: configuration)
         actions.append(testAction)
         
         // Assigning background colors

@@ -12,14 +12,15 @@ open class RoundedSwipeableCellBackgroundView: UIView {
     public var cornerRadius: CGFloat = 5
     
     public var separatorColor: UIColor?
+    public var focusBackgroundColor: UIColor?
     public var selectionBackgroundColor: UIColor?
     public var highlightBackgroundColor: UIColor?
     
     public weak var nextCell: UITableViewCell?
     public weak var previousCell: UITableViewCell?
-    public var isActive: Bool = false
-    public var isSelected: Bool = false
-    public var isHighlighted: Bool = false
+    public var isCellActive: Bool = false
+    public var isCellSelected: Bool = false
+    public var isCellHighlighted: Bool = false
 
     public var drawCustomSeparator: (() -> Void)? = nil
     
@@ -72,7 +73,7 @@ open class RoundedSwipeableCellBackgroundView: UIView {
     open func drawSelectionAltState(in dirtyRect: CGRect) {
         
         self.layer.cornerRadius = self.cornerRadius
-        if self.isSelected {
+        if self.isCellSelected {
             let selectionBezierPath = UIBezierPath(
                 roundedRect: dirtyRect,
                 byRoundingCorners: self.selectionCorners,
@@ -81,12 +82,21 @@ open class RoundedSwipeableCellBackgroundView: UIView {
             selectionBezierPath.fill()
         }
 
-        if self.isHighlighted {
+        if self.isCellHighlighted {
             let highlightBezierPath = UIBezierPath(
                 roundedRect: dirtyRect,
                 byRoundingCorners: self.highlightCorners,
                 cornerRadii: CGSize(width: self.cornerRadius, height: 0))
             self.highlightBackgroundColor?.setFill()
+            highlightBezierPath.fill()
+        }
+        
+        if self.isCellActive {
+            let highlightBezierPath = UIBezierPath(
+                roundedRect: dirtyRect,
+                byRoundingCorners: self.highlightCorners,
+                cornerRadii: CGSize(width: self.cornerRadius, height: 0))
+            self.focusBackgroundColor?.setFill()
             highlightBezierPath.fill()
         }
     }
