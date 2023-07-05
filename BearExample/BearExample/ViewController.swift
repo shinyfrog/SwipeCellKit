@@ -49,7 +49,9 @@ extension ViewController: SwipeTableViewCellDelegate {
     func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
         var options = SwipeOptions()
         options.buttonSpacing = 6
-        options.expansionStyle = .destructive
+        options.expansionStyle = SwipeExpansionStyle(target: .edgeInset(0),
+                                                     additionalTriggers: [.touchThreshold(0.8)],
+                                                     completionAnimation: .fill(.manual(timing: .with)))
         return options
     }
     
@@ -65,7 +67,7 @@ extension ViewController: SwipeTableViewCellDelegate {
             self.numberOfNotes -= 1
             self.tableView.deleteRows(at: [indexPath], with: .fade)
         }
-        trashRestoreAction.hidesWhenSelected = true
+        trashRestoreAction.hidesWhenSelected = false
         trashRestoreAction.image = UIImage(systemName: "trash", withConfiguration: configuration)
         actions.append(trashRestoreAction)
         

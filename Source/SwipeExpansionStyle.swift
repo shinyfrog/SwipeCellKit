@@ -87,7 +87,9 @@ public struct SwipeExpansionStyle {
     func shouldExpand(view: Swipeable, gesture: UIPanGestureRecognizer, in superview: UIView, within frame: CGRect? = nil) -> Bool {
         guard let actionsView = view.actionsView, let gestureView = gesture.view else { return false }
         guard abs(gesture.translation(in: gestureView).x) > minimumExpansionTranslation else { return false }
-    
+        // Shiny Frog: Making it possible to have a delete animation without an
+        //             expandable on swipe cell
+        guard self.target != .edgeInset(0) else { return false }
         let xDelta = floor(abs(frame?.minX ?? view.frame.minX))
         if xDelta <= actionsView.preferredWidth {
             return false
