@@ -20,6 +20,16 @@
 		9FE8699729421C6200BDD99D /* RoundedSwipeableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FE8699429421C6200BDD99D /* RoundedSwipeableCell.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		9F059FD92C58F13A006EBF10 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9F059FD52C58F13A006EBF10 /* ObjcExample.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 9F059FB92C58F12C006EBF10;
+			remoteInfo = ObjcExample;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		9FDAC5862932837E00A002A9 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -35,6 +45,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9F059FD52C58F13A006EBF10 /* ObjcExample.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ObjcExample.xcodeproj; path = ../ObjcExample/ObjcExample.xcodeproj; sourceTree = "<group>"; };
 		9FDAC56329327A8300A002A9 /* BearExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BearExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FDAC56629327A8300A002A9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9FDAC56829327A8300A002A9 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -61,9 +72,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9F059FD62C58F13A006EBF10 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9F059FDA2C58F13A006EBF10 /* ObjcExample.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		9FDAC55A29327A8300A002A9 = {
 			isa = PBXGroup;
 			children = (
+				9F059FD52C58F13A006EBF10 /* ObjcExample.xcodeproj */,
 				9FDAC56529327A8300A002A9 /* BearExample */,
 				9FDAC5822932837E00A002A9 /* Frameworks */,
 			);
@@ -151,12 +171,28 @@
 			mainGroup = 9FDAC55A29327A8300A002A9;
 			productRefGroup = 9FDAC56429327A8300A002A9 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 9F059FD62C58F13A006EBF10 /* Products */;
+					ProjectRef = 9F059FD52C58F13A006EBF10 /* ObjcExample.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				9FDAC56229327A8300A002A9 /* BearExample */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		9F059FDA2C58F13A006EBF10 /* ObjcExample.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = ObjcExample.app;
+			remoteRef = 9F059FD92C58F13A006EBF10 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		9FDAC56129327A8300A002A9 /* Resources */ = {
