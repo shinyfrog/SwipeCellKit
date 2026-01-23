@@ -125,6 +125,8 @@ open class SwipeTableViewCell: UITableViewCell, SwipeControllerDelegate {
         let point = convert(point, to: superview)
 
         if !UIAccessibility.isVoiceOverRunning {
+            /// We will hide any curretnly opened swipable cell when another one
+            /// is being opened
             for cell in tableView?.swipeCells ?? [] {
                 if (cell.state == .left || cell.state == .right) && !cell.contains(point: point) {
                     tableView?.hideSwipeCell()
@@ -142,10 +144,18 @@ open class SwipeTableViewCell: UITableViewCell, SwipeControllerDelegate {
     
     /// :nodoc:
     override open func setHighlighted(_ highlighted: Bool, animated: Bool) {
-        if state == .center {
-            super.setHighlighted(highlighted, animated: animated)
+            if state == .center {
+                super.setHighlighted(highlighted, animated: animated)
+            if #available(iOS 26, *) {
+                /// We want to always apply the super highlighted state from iOS 26
+                /// on, because otherwise we will have highlighted cell, even after
+                /// they are de-swiped
+            } else {
+                if state == .center {
+                    super.setHighlighted(highlighted, animated: animated)
+                }
+            }
         }
-    }
     
     /// :nodoc:
     override open func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
